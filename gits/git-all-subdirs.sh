@@ -1,51 +1,56 @@
 #!/bin/bash
 
-# search for all .git repos in all subdirectories
+# Search for all .git repos in all subdirectories
 # cd into them
-# and run the git command
+# And run a summarized git command or each git command
 
 command="$1"
 
-if [[ "$command" = "scan" ]] ; then
-	find . -name .git -type d -prune -exec dirname {} \; | tee .scancache.git-allsubdirs
-fi;
+SCAN_CACHE=".scancache.git-allsubdirs"
 
-# show only changed files
-if [[ "$command" = "status" ]] ; then
-root=$(pwd)
-while read -r dir; do
-  cd "$root/$dir" || exit;
-  git diff --exit-code &> /dev/null
-  if (( "$?" != 0 ));
-  then
-    printf '\e[1;34m%-6s\e[m'  "$dir \\n"
-    git status
-    printf "\n"
-   fi
-done < .scancache.git-allsubdirs
-fi;
+if [[ ! -f "$SCAN_CACHE" ]]; then
+  echo "Run scan first"
+  exit 1
+fi
 
-if [[ "$command" = "fetchall" ]] ; then
-root=$(pwd)
-while read -r dir; do
-  cd "$root/$dir" || exit;
-    printf '\e[1;34m%-6s\e[m'  "$dir \n"
+if [[ "$command" = "scan" ]]; then
+  find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+fi
+
+# Show only changed files
+if [[ "$command" = "status" ]]; then
+  root=$(pwd)
+  while read -r dir; do
+    cd "$root/$dir" || exit
+    git diff --exit-code &>/dev/null
+    if (("$?" != 0)); then
+      printf '\e[1;34m%-6s\e[m' "$dir \\n"
+      git status
+      printf "\n"
+    fi
+  done <"$SCAN_CACHE"
+fi
+
+if [[ "$command" = "fetchall" ]]; then
+  root=$(pwd)
+  while read -r dir; do
+    cd "$root/$dir" || exit
+    printf '\e[1;34m%-6s\e[m' "$dir \n"
     git fetch --all &
     printf "\n"
-done < .scancache.git-allsubdirs
-fi;
-
+  done <"$SCAN_CACHE"
+fi
 
 # run custom git command
-if [[ "$command" = "git" ]] ; then
-root=$(pwd)
-while read -r dir; do
-  cd "$root/$dir" || exit;
-    printf '\e[1;34m%-6s\e[m'  "$dir \\n"
+if [[ "$command" = "git" ]]; then
+  root=$(pwd)
+  while read -r dir; do
+    cd "$root/$dir" || exit
+    printf '\e[1;34m%-6s\e[m' "$dir \\n"
     git "${@:2}"
     printf "\\n"
-done < .scancache.git-allsubdirs
-fi;
+  done <"$SCAN_CACHE"
+fi
 
 # find . -name .git -type d -prune | while IFS= read -r dir_git; do
 #     dir=$(dirname $dir_git)

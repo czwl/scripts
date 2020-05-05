@@ -1,1 +1,1 @@
-curl https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore > .gitignore
+curl https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore >.gitignore

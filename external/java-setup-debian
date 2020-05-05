@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo "Only run this if you already extracted the jdk"
 
 JAVA_INSTALL_PATH=/opt/java/jdk1.8.0

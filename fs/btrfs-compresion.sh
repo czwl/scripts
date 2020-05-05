@@ -1,3 +1,3 @@
 #!/bin/sh
 
-	btrfs filesystem defragment -r -v -czstd "$1"
+btrfs filesystem defragment -r -v -czstd "$1"

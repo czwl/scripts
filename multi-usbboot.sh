@@ -1,17 +1,15 @@
-
 mount_allpoints() {
-# Create the mountpoints
-sudo mkdir /mnt/media/{efi,data}
+  # Create the mountpoints
+  sudo mkdir /mnt/media/{efi,data}
 
-# Mount the EFI partition
-sudo mount /dev/sdb1 /mnt/media/efi
-# Mount the data partition
-sudo mount /dev/sdb2 /mnt/media/data
+  # Mount the EFI partition
+  sudo mount /dev/sdb1 /mnt/media/efi
+  # Mount the data partition
+  sudo mount /dev/sdb2 /mnt/media/data
 }
 
-
 mount_allpoints
- 
+
 sudo grub-install \
   --verbose \
   --target=i386-pc \
@@ -25,4 +23,4 @@ sudo grub-install \
   --recheck \
   --removable \
   --efi-directory="/mnt/media/efi" \
-  --boot-directory="/mnt/media/efi/grub" 
+  --boot-directory="/mnt/media/efi/grub"

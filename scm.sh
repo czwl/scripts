@@ -4,6 +4,3 @@
 
 BIN_DIR="~/bin/.bin"
 SCR_DIR="~/scripts"
-
-
-
