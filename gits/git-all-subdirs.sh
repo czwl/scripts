@@ -8,13 +8,13 @@ command="$1"
 
 SCAN_CACHE=".scancache.git-allsubdirs"
 
+if [[ "$command" = "scan" ]]; then
+  find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+fi
+
 if [[ ! -f "$SCAN_CACHE" ]]; then
   echo "Run scan first"
   exit 1
-fi
-
-if [[ "$command" = "scan" ]]; then
-  find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
 fi
 
 # Show only changed files
@@ -37,6 +37,16 @@ if [[ "$command" = "fetchall" ]]; then
     cd "$root/$dir" || exit
     printf '\e[1;34m%-6s\e[m' "$dir \n"
     git fetch --all &
+    printf "\n"
+  done <"$SCAN_CACHE"
+fi
+
+if [[ "$command" = "remotes" ]]; then
+  root=$(pwd)
+  while read -r dir; do
+    cd "$root/$dir" || exit
+    printf "\e[1;34m%-6s\e[m $dir \n" 
+    git remote -v
     printf "\n"
   done <"$SCAN_CACHE"
 fi
