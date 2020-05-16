@@ -4,12 +4,25 @@
 # cd into them
 # And run a summarized git command or each git command
 
+
+# Allow scanning worktrees
+if [[ "$1" == "-w" ]]; then
+	SCAN_WORKTREES=true
+	shift
+fi
+
 command="$1"
 
 SCAN_CACHE=".scancache.git-allsubdirs"
 
 if [[ "$command" = "scan" ]]; then
-  find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+   if [[ "$SCAN_WORKTREES" == true ]] ; then
+
+  	find . -name .git  -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+   else
+
+  	find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+   fi
 fi
 
 if [[ ! -f "$SCAN_CACHE" ]]; then
