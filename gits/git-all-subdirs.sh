@@ -4,78 +4,86 @@
 # cd into them
 # And run a summarized git command or each git command
 
-
-# Allow scanning worktrees
-if [[ "$1" == "-w" ]]; then
-	SCAN_WORKTREES=true
-	shift
-fi
-
-command="$1"
-
 SCAN_CACHE=".scancache.git-allsubdirs"
 
-if [[ "$command" = "scan" ]]; then
-   if [[ "$SCAN_WORKTREES" == true ]] ; then
+sub_scan() {
+	# Allow scanning worktrees
+	if [[ "$1" == "-w" ]]; then
+		SCAN_WORKTREES=true
+		shift
+	fi
 
-  	find . -name .git  -prune -exec dirname {} \; | tee "$SCAN_CACHE"
-   else
+	if [[ "$SCAN_WORKTREES" == true ]]; then
 
-  	find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
-   fi
-fi
+		find . -name .git -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+	else
 
-if [[ ! -f "$SCAN_CACHE" ]]; then
-  echo "Run scan first"
-  exit 1
-fi
+		find . -name .git -type d -prune -exec dirname {} \; | tee "$SCAN_CACHE"
+	fi
+}
 
 # Show only changed files
-if [[ "$command" = "status" ]]; then
-  root=$(pwd)
-  while read -r dir; do
-    cd "$root/$dir" || exit
-    git diff --exit-code &>/dev/null
-    if (("$?" != 0)); then
-      printf '\e[1;34m%-6s\e[m' "$dir \\n"
-      git status
-      printf "\n"
-    fi
-  done <"$SCAN_CACHE"
-fi
+sub_status() {
+	root=$(pwd)
+	while read -r dir; do
+		cd "$root/$dir" || exit
 
-if [[ "$command" = "fetchall" ]]; then
-  root=$(pwd)
-  while read -r dir; do
-    cd "$root/$dir" || exit
-    printf '\e[1;34m%-6s\e[m' "$dir \n"
-    git fetch --all &
-    printf "\n"
-  done <"$SCAN_CACHE"
-fi
+		if git diff --exit-code &>/dev/null; then
+			printf '\e[1;34m%-6s\e[m' "$dir \\n"
+			git status
+			printf "\n"
+		fi
+	done <"$SCAN_CACHE"
+}
 
-if [[ "$command" = "remotes" ]]; then
-  root=$(pwd)
-  while read -r dir; do
-    cd "$root/$dir" || exit
-    printf "\e[1;34m%-6s\e[m $dir \n" 
-    git remote -v
-    printf "\n"
-  done <"$SCAN_CACHE"
-fi
+sub_fetchall() {
+	root=$(pwd)
+	while read -r dir; do
+		cd "$root/$dir" || exit
+		printf '\e[1;34m%-6s\e[m' "$dir \n"
+		git fetch --all &
+		printf "\n"
+	done <"$SCAN_CACHE"
+}
+
+sub_remotes() {
+	root=$(pwd)
+	while read -r dir; do
+		cd "$root/$dir" || exit
+		printf "\e[1;34m%-6s\e[m $dir \n"
+		git remote -v
+		printf "\n"
+	done <"$SCAN_CACHE"
+}
 
 # run custom git command
-if [[ "$command" = "git" ]]; then
-  root=$(pwd)
-  while read -r dir; do
-    cd "$root/$dir" || exit
-    printf '\e[1;34m%-6s\e[m' "$dir \\n"
-    git "${@:2}"
-    printf "\\n"
-  done <"$SCAN_CACHE"
-fi
+sub_git() {
+	root=$(pwd)
+	while read -r dir; do
+		cd "$root/$dir" || exit
+		printf '\e[1;34m%-6s\e[m' "$dir \\n"
+		git "${@}"
+		printf "\\n"
+	done <"$SCAN_CACHE"
 
-# find . -name .git -type d -prune | while IFS= read -r dir_git; do
-#     dir=$(dirname $dir_git)
-#     echo $dir
-# done
+}
+
+subcommand=$1
+case $subcommand in
+"" | "-h" | "--help")
+	sub_help
+	;;
+*)
+	shift
+	sub_"${subcommand}" "$@"
+	if [ $? = 127 ]; then
+		if [[ ! -f "$SCAN_CACHE" ]]; then
+			echo "Run scan first"
+			exit 1
+		fi
+		echo "Error: '$subcommand' is not a known subcommand." >&2
+		echo "       Run '$progname --help' for a list of known subcommands." >&2
+		exit 1
+	fi
+	;;
+esac
