@@ -9,6 +9,8 @@
 
 cwd="$(pwd)"
 
+CACHED_NM_NAME="nm_cached.xz"
+
 sub_setup() {
   zdev="$(zramctl -f -s 1.2G)"
   mkfs.f2fs "$zdev"
@@ -18,16 +20,16 @@ sub_setup() {
 }
 
 sub_bind() {
-  leaf_name = "$cwd/node_modules/leaf"*
-  mount -o bind /run/node_modules/$leaf_name node_modules
+  leaf_name="$cwd/node_modules/leaf"*
+  mount -o bind /run/node_modules/"$leaf_name" node_modules
 }
 
 sub_load() {
-  tar -xf ~/npm.xz -C /run/node_modules
+  tar -xf "$CACHED_NM_NAME" -C /run/node_modules
 }
 
 sub_save() {
-  tar -cf ~/npm.xz /run/node_modules
+  tar -cf "$CACHED_NM_NAME" /run/node_modules
 }
 
 progname="node_zram"
@@ -39,7 +41,7 @@ case $subcommand in
     ;;
   *)
     shift
-    sub_${subcommand} $@
+    sub_"${subcommand}" "$@"
     if [ $? = 127 ]; then
       echo "Error: '$subcommand' is not a known subcommand." >&2
       echo "       Run '$progname --help' for a list of known subcommands." >&2
