@@ -38,6 +38,12 @@ set_browser() {
 }
 
 setup_ramstore() {
+
+  if [[ -z  "$NOTLOADED_DONT_SYNC"   ]]; then
+    echo "Refusing to load ontop of already loaded profiles"
+    exit 1
+  fi
+  
   mkdir -p "$ramdir"
   mkdir "$ramdir/$browser_prefix"
 
@@ -57,6 +63,12 @@ setup_ramstore() {
 }
 
 load_profile() {
+
+  if [[ -z  "$NOTLOADED_DONT_SYNC"   ]]; then
+    echo "Refusing to load ontop of already loaded profiles"
+    exit 1
+  fi
+
   cd "$ramprofile"
   lbzip2 -dc <"$browser_config_store" | tar -x
   lbzip2 -dc <"$browser_cache_store" | tar -x
@@ -74,14 +86,16 @@ sync_profile() {
 
   if [[ "$NOTLOADED_DONT_SYNC" = true ]]; then
     echo "Refusing to sync without a loaded profiles"
-    exit -1
+    exit 1
   fi
 
   # Cleanup unnecessary cache
   rm -rf "$ramprofile/cache/Default/Cache"
+    rm -rf "$ramprofile/cache/Default/Code Cache"
   rm -rf "$ramprofile/config/Default/GPUCache"
   rm -rf "$ramprofile/config/Default/Application Cache"
   rm -rf "$ramprofile/config/Default/Service Worker/ScriptCache"
+  rm -rf "$ramprofile/config/Default/Service Worker/CacheStorage"
 
   rm -rf "$ramprofile"/cache/firefox/*/cache2
   rm -rf "$ramprofile"/cache/firefox/*/thumbnails
