@@ -91,7 +91,10 @@ sync_profile() {
 
   # Cleanup unnecessary cache
   rm -rf "$ramprofile/cache/Default/Cache"
-    rm -rf "$ramprofile/cache/Default/Code Cache"
+  rm -rf "$ramprofile/cache/Default/Code Cache"
+  
+  rm -rf "$ramprofile/cache/"Profile*
+
   rm -rf "$ramprofile/config/Default/GPUCache"
   rm -rf "$ramprofile/config/Default/Application Cache"
   rm -rf "$ramprofile/config/Default/Service Worker/ScriptCache"
