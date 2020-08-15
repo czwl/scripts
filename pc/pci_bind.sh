@@ -3,8 +3,8 @@
 usr="$SUDO_USER"
 
 if [[ -z "$usr" ]]; then
-  printf "This script must be run via sudo"
-  exit 1
+	printf "This script must be run via sudo"
+	exit 1
 fi
 
 echo "8086 191b" >/sys/bus/pci/drivers/pci-stub/new_id

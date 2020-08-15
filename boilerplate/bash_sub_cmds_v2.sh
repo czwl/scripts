@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Copyright (C) 20 
-# Website:  
+# Copyright (C) 20
+# Website:
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -9,7 +9,7 @@
 ## BASH IS CRAP. DONT USE BASH KIDS
 ## ONCE YOU USE BASH YOU DOWN THE RABBIT BUTT HOLE
 ## AND IT FUCKIN DARK AND IT SMELLS LIKE SHIT
- 
+
 BASE_DIR="$(
 	cd "$(dirname "$(readlink -f "$0")")"
 	pwd
@@ -27,14 +27,13 @@ main() {
 		set -x
 		shift
 	fi
-     
+
 	subcommand=$2
 	case $subcommand in
 	"" | "-h" | "--help")
 		sub_help
 		;;
 	*)
- 
 
 		if type -t "sub_${subcommand}"; then
 			"sub_${subcommand}" "${@}"
@@ -59,6 +58,5 @@ sub_help() {
 	done
 	printf "%s" "$cmds"
 }
- 
 
 main "$@"

@@ -3,15 +3,15 @@
 max_lts=100
 
 while sleep 1; do
-  lts="$(ping -qc1 google.com 2>&1)"
-  png=$(echo "$lts" | awk -F'/' 'END{ print (/^rtt/? ""$5"":"FAIL") }')
-  disp=$(echo "$lts" | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }')
+	lts="$(ping -qc1 google.com 2>&1)"
+	png=$(echo "$lts" | awk -F'/' 'END{ print (/^rtt/? ""$5"":"FAIL") }')
+	disp=$(echo "$lts" | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }')
 
-  if (($(echo "$png > $max_lts" | bc -l))); then
+	if (($(echo "$png > $max_lts" | bc -l))); then
 
-    exit
-  fi
+		exit
+	fi
 
-  echo $disp
+	echo $disp
 
 done

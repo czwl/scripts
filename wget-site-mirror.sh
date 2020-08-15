@@ -13,11 +13,11 @@ cwd=$PWD
 opts=$(cat "${cwd}/.wgmconf")
 
 start_mirror() {
-  wget -m -p -np -nd -c --html-extension --convert-links ${opts} ${sit_url}
+	wget -m -p -np -nd -c --html-extension --convert-links ${opts} ${sit_url}
 }
 
 upd_mirror() {
-  exec "wget --mirror -p -np -N -c --html-extension --convert-links  ${opts} ${sit_url}"
+	exec "wget --mirror -p -np -N -c --html-extension --convert-links  ${opts} ${sit_url}"
 }
 
 start_mirror

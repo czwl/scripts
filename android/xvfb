@@ -13,39 +13,39 @@ XVFB_OPTIONS=":5 -screen 0 1024x720x24 -fbdir
 /var/run"
 
 start() {
-  echo -n "Starting : X Virtual Frame Buffer "
-  $XVFB $XVFB_OPTIONS >>$XVFB_OUTPUT 2>&1
-  RETVAL=$?
-  echo
-  return $RETVAL
+	echo -n "Starting : X Virtual Frame Buffer "
+	$XVFB $XVFB_OPTIONS >>$XVFB_OUTPUT 2>&1
+	RETVAL=$?
+	echo
+	return $RETVAL
 }
 
 stop() {
-  echo -n "Shutting down : X Virtual Frame Buffer"
-  echo
-  killall Xvfb
-  echo
-  return 0
+	echo -n "Shutting down : X Virtual Frame Buffer"
+	echo
+	killall Xvfb
+	echo
+	return 0
 }
 
 case "$1" in
-  start)
-    start
-    ;;
-  stop)
-    stop
-    ;;
-  status)
-    status xvfb
-    ;;
-  restart)
-    stop
-    start
-    ;;
+start)
+	start
+	;;
+stop)
+	stop
+	;;
+status)
+	status xvfb
+	;;
+restart)
+	stop
+	start
+	;;
 
-  *)
-    echo "Usage: xvfb {start|stop|status|restart}"
-    exit 1
-    ;;
+*)
+	echo "Usage: xvfb {start|stop|status|restart}"
+	exit 1
+	;;
 esac
 exit $?

@@ -6,8 +6,8 @@ uid="$id -u"
 files=($(find . ! -user "$uid"))
 
 fixfunc() {
-  chmod 0600 ${@}
-  chown "$(id -u)".users ${@}
+	chmod 0600 ${@}
+	chown "$(id -u)".users ${@}
 }
 
 fixfunc $files
